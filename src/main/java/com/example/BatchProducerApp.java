@@ -1,13 +1,12 @@
+package com.example;
+
 import org.apache.kafka.clients.producer.*;
 
 import java.text.*;
 import java.util.*;
 
-public class ProducerApp {
+public class BatchProducerApp {
 
-    private ProducerApp() {
-
-    }
     public static void main(String[] args){
 
         // Create the Properties class to instantiate the Consumer with the desired settings:
@@ -34,14 +33,24 @@ public class ProducerApp {
         DateFormat dtFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss:SSS");
         String topic = "my-topic";
 
-        int numberOfRecords = 100; // number of records to send
-        long sleepTimer = 0; // how long you want to wait before the next record to be sent
-
         try {
-                for (int i = 0; i < numberOfRecords; i++ )
-                    myProducer.send(new ProducerRecord<String, String>(topic, String.format("Message: %s  sent at %s", Integer.toString(i), dtFormat.format(new Date()))));
-                    Thread.sleep(sleepTimer);
-                    // Thread.sleep(new Random(5000).nextLong()); // use if you want to randomize the time between record sends
+            int batchNumber = 1;
+            int counter = 0;
+            while (true) {
+                do {
+                    myProducer.send(
+                            new ProducerRecord<String, String>(topic, String.format("Batch: %s || %s", Integer.toString(batchNumber), dtFormat.format(new Date())))
+                    );
+                    counter++; // Increase record counter...
+                    // Thread.sleep(500); // use if you want to add latency between record sends
+                    // Thread.sleep(new Random(1000).nextLong()); // use if you want to add random latency between record sends
+                } while (counter < 10); // Number of records sent in a batch...
+                counter = 0; // Reset the record counter...
+                Thread.sleep(500); // Set how long before a new batch is sent...
+                // Thread.sleep(new Random(5000).nextLong()); // use if you want to randomize the time between batch record sends
+                batchNumber++; // Increase the batch number...
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -1,9 +1,11 @@
+package com.example;
+
+import org.apache.kafka.common.*;
 import org.apache.kafka.clients.consumer.*;
 
 import java.util.*;
 
-public class ConsumerGroupApp {
-
+public class ConsumerApp {
     public static void main(String[] args){
 
         // Create the Properties class to instantiate the Consumer with the desired settings:
@@ -12,7 +14,7 @@ public class ConsumerGroupApp {
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("fetch.min.bytes", 1);
-        props.put("group.id", "my-group"); // Required when subscribing to topics. Rename as desired.
+        props.put("group.id", "");
         props.put("heartbeat.interval.ms", 3000);
         props.put("max.partition.fetch.bytes", 1048576);
         props.put("session.timeout.ms", 30000);
@@ -35,16 +37,17 @@ public class ConsumerGroupApp {
         KafkaConsumer<String, String> myConsumer = new KafkaConsumer<String, String>(props);
 
         // Create a topic subscription list:
-        ArrayList<String> topics = new ArrayList<String>();
-        topics.add("my-topic");
-        // topics.add("myNewTopic");
-        myConsumer.subscribe(topics);
+        ArrayList<TopicPartition> partitions = new ArrayList<TopicPartition>();
+        partitions.add(new TopicPartition("my-topic", 0)); // Adds a TopicPartition instance representing a topic and a partition.
+        partitions.add(new TopicPartition("my-topic", 2)); // Adds an additional TopicPartition instance representing a different partition within the topic. Change as desired.
+        // Assign partitions to the Consumer:
+        myConsumer.assign(partitions);
 
         // Retrieves the topic subscription list from the SubscriptionState internal object:
-        Set<String> subscribedTopics = myConsumer.subscription();
+        Set<TopicPartition> assignedPartitions = myConsumer.assignment();
 
-        // Print the topic subscription list:
-        printSet(subscribedTopics);
+        // Print the partition assignments:
+        printSet(assignedPartitions);
 
         // Start polling for messages:
         try {
@@ -58,14 +61,14 @@ public class ConsumerGroupApp {
 
     }
 
-    private static void printSet(Set<String> collection){
+    private static void printSet(Set<TopicPartition> collection){
         if (collection.isEmpty()) {
-            System.out.println("I am not subscribed to anything yet...");
+            System.out.println("I do not have any partitions assigned yet...");
         }
         else {
-            System.out.println("I am subscribed to the following topics:");
-            for (String item : collection){
-                System.out.println(item);
+            System.out.println("I am assigned to following partitions:");
+            for (TopicPartition partition: collection){
+                System.out.println(String.format("Partition: %s in Topic: %s", Integer.toString(partition.partition()), partition.topic()));
             }
         }
     }

@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - ProducerApp",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "com.example.ProducerApp",
+            "args": "",
+            "projectName": "basic-kafka-producer"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - ProducerApp",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "ProducerApp",
+            "args": "",
+            "projectName": "basic-kafka-producer"
+        }
+    ]
+}

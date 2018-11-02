@@ -5,6 +5,9 @@ import java.util.*;
 
 public class ProducerApp {
 
+    private ProducerApp() {
+
+    }
     public static void main(String[] args){
 
         // Create the Properties class to instantiate the Consumer with the desired settings:

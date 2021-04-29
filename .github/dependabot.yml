@@ -1,0 +1,12 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "23:15"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: org.apache.kafka:kafka-clients
+    versions:
+    - 2.7.0
